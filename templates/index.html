@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Board - Personal Growth Dashboard</title>
+    <!-- HTMX -->
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="style.css">
+    <!-- Metro UI inspired custom CSS -->
+</head>
+<body>
+    <!-- Inspirational Banner -->
+    <div class="inspire-banner">
+        "Success is not final, failure is not fatal: it is the courage to continue that counts."
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Left Side - Rules -->
+        <div class="metro-tile rules-tile"
+             hx-get="/api/rules"
+             hx-trigger="click"
+             hx-target="#rules-content">
+            <div class="tile-header">Rules & Principles</div>
+            <div id="rules-content" class="tile-content">
+                <ul class="bullet-list">
+                    <li>Start each day with intention and purpose</li>
+                    <li>Focus on high-impact activities first</li>
+                    <li>Learn something new every day</li>
+                    <li>Maintain work-life balance</li>
+                    <li>Review and reflect weekly</li>
+                    <li>Stay consistent with habits</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Center Column -->
+        <div class="metro-tile vision-tile"
+             hx-get="/api/vision"
+             hx-trigger="click"
+             hx-target="#vision-content">
+            <div class="tile-header">Vision</div>
+            <div id="vision-content" class="tile-content">
+                Your long-term vision and goals will appear here
+            </div>
+        </div>
+
+<!-- Add this section before the tasks-tile -->
+<div class="metro-tile core-components-tile"
+hx-get="/api/core-components"
+hx-trigger="load"
+hx-target="#components-content">
+<div class="tile-header">Core Components</div>
+<div id="components-content" class="components-grid">
+   <!-- Technical Skills -->
+   <div class="component-card">
+       <div class="component-header">Technical Skills</div>
+       <div class="component-content">
+           Frontend & Backend Development
+           <div class="progress-bar">
+               <div class="progress-fill" style="width: 85%"></div>
+           </div>
+       </div>
+   </div>
+
+   <!-- Tools & Technologies -->
+   <div class="component-card">
+       <div class="component-header">Tools & Tech</div>
+       <div class="component-content">
+           Modern Development Stack
+           <div class="progress-bar">
+               <div class="progress-fill" style="width: 75%"></div>
+           </div>
+       </div>
+   </div>
+
+   <!-- Domain Knowledge -->
+   <div class="component-card">
+       <div class="component-header">Domain Expertise</div>
+       <div class="component-content">
+           Industry Best Practices
+           <div class="progress-bar">
+               <div class="progress-fill" style="width: 80%"></div>
+           </div>
+       </div>
+   </div>
+
+   <!-- Soft Skills -->
+   <div class="component-card">
+       <div class="component-header">Soft Skills</div>
+       <div class="component-content">
+           Communication & Leadership
+           <div class="progress-bar">
+               <div class="progress-fill" style="width: 90%"></div>
+           </div>
+       </div>
+   </div>
+
+   <!-- Growth Areas -->
+   <div class="component-card">
+       <div class="component-header">Growth Areas</div>
+       <div class="component-content">
+           Learning & Development
+           <div class="progress-bar">
+               <div class="progress-fill" style="width: 70%"></div>
+           </div>
+       </div>
+   </div>
+</div>
+</div>
+
+        <div class="metro-tile tasks-tile"
+             hx-get="/api/tasks"
+             hx-trigger="load"
+             hx-target="#kanban-content">
+            <div class="tile-header">Tasks Board</div>
+            <div id="kanban-content" class="kanban-board">
+                <!-- Backlog Column -->
+                <div class="kanban-column"
+                     hx-get="/api/tasks/backlog"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="column-header">Backlog</div>
+                    <div class="task-card">Research new technologies</div>
+                    <div class="task-card">Plan architecture</div>
+                </div>
+
+                <!-- To-Do Column -->
+                <div class="kanban-column"
+                     hx-get="/api/tasks/todo"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="column-header">To-Do</div>
+                    <div class="task-card">Set up development environment</div>
+                    <div class="task-card">Create project structure</div>
+                </div>
+
+                <!-- In-Process Column -->
+                <div class="kanban-column"
+                     hx-get="/api/tasks/in-process"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="column-header">In-Process</div>
+                    <div class="task-card">Implementing user authentication</div>
+                    <div class="task-card">Building dashboard UI</div>
+                </div>
+
+                <!-- Testing Column -->
+                <div class="kanban-column"
+                     hx-get="/api/tasks/testing"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="column-header">Testing</div>
+                    <div class="task-card">Unit testing for auth module</div>
+                    <div class="task-card">Integration testing</div>
+                </div>
+
+                <!-- Done Column -->
+                <div class="kanban-column"
+                     hx-get="/api/tasks/done"
+                     hx-trigger="load"
+                     hx-target="this">
+                    <div class="column-header">Done</div>
+                    <div class="task-card">Project setup complete</div>
+                    <div class="task-card">Requirements gathering</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="metro-tile ideas-tile"
+             hx-get="/api/ideas"
+             hx-trigger="load"
+             hx-target="#ideas-content">
+            <div class="tile-header">
+                Ideas Board
+                <button class="add-idea-btn"
+                        hx-get="/api/ideas/new"
+                        hx-target="#idea-form"
+                        style="float: right; padding: 5px 10px;">
+                    + New Idea
+                </button>
+            </div>
+            
+            <div id="ideas-content" class="ideas-grid">
+                <!-- What Section -->
+                <div class="idea-section what-section">
+                    <div class="idea-header">WHAT</div>
+                    <div class="idea-item">
+                        Build a personal knowledge base
+                    </div>
+                </div>
+
+                <!-- When Section -->
+                <div class="idea-section when-section">
+                    <div class="idea-header">WHEN</div>
+                    <div class="idea-item">
+                        Start Q2 2024, complete by Q3
+                    </div>
+                </div>
+
+                <!-- Where Section -->
+                <div class="idea-section where-section">
+                    <div class="idea-header">WHERE</div>
+                    <div class="idea-item">
+                        Web-based platform, mobile responsive
+                    </div>
+                </div>
+
+                <!-- Why Section -->
+                <div class="idea-section why-section">
+                    <div class="idea-header">WHY</div>
+                    <div class="idea-item">
+                        To centralize learning and improve retention
+                    </div>
+                </div>
+            </div>
+
+            <!-- New Idea Form -->
+            <div id="idea-form" class="idea-form">
+                <form hx-post="/api/ideas/create" hx-target="#ideas-content">
+                    <div style="margin-bottom: 10px;">
+                        <label>What:</label>
+                        <textarea name="what" required style="width: 100%; margin-top: 5px;"></textarea>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label>When:</label>
+                        <textarea name="when" required style="width: 100%; margin-top: 5px;"></textarea>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label>Where:</label>
+                        <textarea name="where" required style="width: 100%; margin-top: 5px;"></textarea>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label>Why:</label>
+                        <textarea name="why" required style="width: 100%; margin-top: 5px;"></textarea>
+                    </div>
+                    <button type="submit">Save Idea</button>
+                    <button type="button" onclick="this.closest('.idea-form').classList.remove('active')">Cancel</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Right Side - Roadmap -->
+        <div class="metro-tile roadmap-tile"
+             hx-get="/api/roadmap"
+             hx-trigger="click"
+             hx-target="#roadmap-content">
+            <div class="tile-header">Roadmap</div>
+            <div id="roadmap-content" class="tile-content">
+                <ul class="bullet-list">
+                    <!-- Example of 20 bullet points structure -->
+                    <li>Quarter 1 Goal: Technology Stack Mastery</li>
+                    <li>Develop Frontend Expertise</li>
+                    <li>Master Backend Systems</li>
+                    <!-- Add more bullet points as needed -->
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html> 
