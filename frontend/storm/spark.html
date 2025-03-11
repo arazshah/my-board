@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark - Quick Idea Capture</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #6B4FBB;
+            --text-color: #2C3E50;
+            --background-color: #F8F9FA;
+            --text-note-color: #2196F3;
+            --voice-note-color: #4CAF50;
+            --video-note-color: #9C27B0;
+            --file-note-color: #FF9800;
+            --idea-color: #E91E63;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: var(--background-color);
+            color: var(--text-color);
+        }
+
+        /* Quick Capture Button */
+        .quick-capture-button {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(107, 79, 187, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .quick-capture-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(107, 79, 187, 0.6);
+        }
+
+        .quick-capture-icon {
+            color: white;
+            font-size: 24px;
+        }
+
+        /* Capture Menu */
+        .capture-menu {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            padding: 10px;
+            z-index: 999;
+            transform: translateY(20px);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .capture-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .capture-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            color: #333;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            min-width: 200px;
+        }
+
+        .capture-option:hover {
+            background: #f5f5f5;
+        }
+
+        .capture-option i {
+            width: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        /* Quick Capture Modal */
+        .quick-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1001;
+        }
+
+        .quick-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close-modal {
+            cursor: pointer;
+            font-size: 24px;
+            color: #666;
+        }
+
+        /* Recording Controls */
+        .recording-controls {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .record-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .record-button.recording {
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Add styles for quick captures list */
+        .captures-container {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            margin-top: 80px;
+        }
+
+        .captures-list {
+            flex: 1;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .captures-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .captures-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .capture-type-section {
+            margin-bottom: 25px;
+        }
+
+        .type-header {
+            font-size: 16px;
+            font-weight: bold;
+            color: #666;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .capture-item {
+            cursor: grab;
+            user-select: none;
+            position: relative;
+            background: white;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .capture-item[data-type="text"] { border-color: var(--text-note-color); }
+        .capture-item[data-type="voice"] { border-color: var(--voice-note-color); }
+        .capture-item[data-type="video"] { border-color: var(--video-note-color); }
+        .capture-item[data-type="file"] { border-color: var(--file-note-color); }
+
+        .capture-item:hover {
+            background: #f0f1f2;
+            transform: translateX(5px);
+        }
+
+        .capture-item.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--primary-color);
+        }
+
+        .capture-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* Ideas Creation Section */
+        .ideas-creation {
+            width: 400px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .idea-drop-zone {
+            min-height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 15px 0;
+            transition: all 0.3s;
+        }
+
+        .idea-drop-zone.drag-over {
+            border-color: var(--primary-color);
+            background: rgba(107, 79, 187, 0.1);
+        }
+
+        .dropped-item {
+            background: #f8f9fa;
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .dropped-item .remove-btn {
+            color: #dc3545;
+            cursor: pointer;
+        }
+
+        /* Updated capture type styles */
+        .capture-type-section[data-type="text"] .type-header i { color: var(--text-note-color); }
+        .capture-type-section[data-type="voice"] .type-header i { color: var(--voice-note-color); }
+        .capture-type-section[data-type="video"] .type-header i { color: var(--video-note-color); }
+        .capture-type-section[data-type="file"] .type-header i { color: var(--file-note-color); }
+
+        /* Ideas List Styles */
+        .ideas-list {
+            margin-top: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .ideas-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .idea-entry {
+            background: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            border-left: 4px solid var(--idea-color);
+        }
+
+        .idea-entry-header {
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .idea-entry-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: bold;
+            color: var(--idea-color);
+        }
+
+        .idea-entry-content {
+            padding: 0 15px 15px;
+        }
+
+        .capture-badges {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .capture-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 8px;
+            color: white;
+        }
+
+        .capture-badge.text { background: var(--text-note-color); }
+        .capture-badge.voice { background: var(--voice-note-color); }
+        .capture-badge.video { background: var(--video-note-color); }
+        .capture-badge.file { background: var(--file-note-color); }
+
+        .captures-preview {
+            margin-top: 10px;
+        }
+
+        /* Ideas Creation Package Styles */
+        .idea-package-section {
+            width: 400px;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .idea-package-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .idea-package-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--idea-color);
+        }
+
+        .idea-title-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+        }
+
+        .idea-title-input:focus {
+            border-color: var(--idea-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.1);
+        }
+
+        .package-drop-zone {
+            min-height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+
+        .package-drop-zone.drag-over {
+            border-color: var(--idea-color);
+            background: rgba(233, 30, 99, 0.05);
+        }
+
+        .package-placeholder {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin: 20px 0;
+        }
+
+        .packaged-item {
+            background: white;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-left: 3px solid;
+        }
+
+        .packaged-item[data-type="text"] { border-color: var(--text-note-color); }
+        .packaged-item[data-type="voice"] { border-color: var(--voice-note-color); }
+        .packaged-item[data-type="video"] { border-color: var(--video-note-color); }
+        .packaged-item[data-type="file"] { border-color: var(--file-note-color); }
+
+        .package-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .package-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .save-package-btn {
+            background: var(--idea-color);
+            color: white;
+        }
+
+        .save-package-btn:hover {
+            background: #d81b60;
+            transform: translateY(-2px);
+        }
+
+        .clear-package-btn {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .clear-package-btn:hover {
+            background: #e0e0e0;
+        }
+
+        /* Updated layout styles */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            padding: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .top-sections {
+            display: flex;
+            gap: 20px;
+        }
+
+        .captures-list {
+            flex: 2;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .idea-package-section {
+            flex: 1;
+            min-width: 400px;
+        }
+
+        .recent-ideas-section {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        /* Drag and Drop Fixes */
+        .capture-item {
+            cursor: grab;
+            user-select: none;
+            position: relative;
+        }
+
+        .capture-item:active {
+            cursor: grabbing;
+        }
+
+        .capture-item.dragging {
+            opacity: 0.5;
+            border: 2px dashed var(--primary-color);
+        }
+
+        .package-drop-zone.drag-active {
+            border: 2px dashed var(--primary-color);
+            background: rgba(107, 79, 187, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Top Sections Container -->
+        <div class="top-sections">
+            <!-- Captures List -->
+            <div class="captures-list">
+                <div class="captures-header">
+                    <div class="captures-title">
+                        <i class="fas fa-bolt"></i>
+                        Quick Captures
+                    </div>
+                </div>
+
+                <!-- Text Notes Section -->
+                <div class="capture-type-section" data-type="text">
+                    <div class="type-header">
+                        <i class="fas fa-pen-fancy"></i>
+                        Text Notes
+                    </div>
+                    <div class="capture-items">
+                        <div class="capture-item" draggable="true" data-id="text1" data-type="text">
+                            <div class="capture-content">
+                                <i class="fas fa-quote-left" style="color: var(--text-note-color); margin-right: 8px;"></i>
+                                Build a personal knowledge management system
+                            </div>
+                            <div class="capture-meta">
+                                <span><i class="far fa-clock"></i> 2 mins ago</span>
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Voice Notes Section -->
+                <div class="capture-type-section" data-type="voice">
+                    <div class="type-header">
+                        <i class="fas fa-microphone-alt"></i>
+                        Voice Notes
+                    </div>
+                    <div class="capture-items">
+                        <div class="capture-item" draggable="true" data-id="voice1" data-type="voice">
+                            <div class="capture-content">
+                                <i class="fas fa-play-circle" style="color: var(--voice-note-color); margin-right: 8px;"></i>
+                                Voice Memo: Project Ideas
+                            </div>
+                            <div class="capture-meta">
+                                <span><i class="far fa-clock"></i> 5 mins ago</span>
+                                <span><i class="far fa-hourglass"></i> 2:34</span>
+                                <i class="fas fa-grip-vertical"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Video and File sections remain the same -->
+            </div>
+
+            <!-- Idea Package Section -->
+            <div class="idea-package-section">
+                <div class="idea-package-header">
+                    <i class="fas fa-box-open" style="color: var(--idea-color); font-size: 24px;"></i>
+                    <div class="idea-package-title">Package Your Idea</div>
+                </div>
+
+                <input type="text" 
+                       class="idea-title-input" 
+                       placeholder="Give your idea a title..."
+                       id="packageTitleInput">
+
+                <div class="package-drop-zone" id="packageDropZone">
+                    <div class="package-placeholder">
+                        <i class="fas fa-arrow-down" style="font-size: 24px; margin-bottom: 10px; color: #999;"></i>
+                        <div>Drag captures here to package them into an idea</div>
+                    </div>
+                    <div class="packaged-items" id="packagedItems"></div>
+                </div>
+
+                <div class="package-actions">
+                    <button class="package-btn save-package-btn" onclick="savePackage()">
+                        <i class="fas fa-save"></i>
+                        Save Idea Package
+                    </button>
+                    <button class="package-btn clear-package-btn" onclick="clearPackage()">
+                        <i class="fas fa-times"></i>
+                        Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Ideas Section (Moved to bottom) -->
+        <div class="recent-ideas-section">
+            <div class="ideas-list-header">
+                <div class="ideas-title">
+                    <i class="fas fa-lightbulb" style="color: var(--idea-color);"></i>
+                    Recent Ideas
+                </div>
+            </div>
+
+            <div class="idea-entries">
+                <div class="idea-entry">
+                    <div class="idea-entry-header" onclick="toggleIdeaEntry(this)">
+                        <div class="idea-entry-title">
+                            <i class="fas fa-star"></i>
+                            Personal Knowledge Base
+                        </div>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="idea-entry-content" style="display: none;">
+                        <div class="capture-badges">
+                            <span class="capture-badge text">
+                                <i class="fas fa-pen-fancy"></i> 2 Text Notes
+                            </span>
+                            <span class="capture-badge voice">
+                                <i class="fas fa-microphone-alt"></i> 1 Voice Note
+                            </span>
+                        </div>
+                        <div class="captures-preview">
+                            <!-- Preview content -->
+                        </div>
+                    </div>
+                </div>
+                <!-- More idea entries -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Capture Button -->
+    <div class="quick-capture-button" onclick="toggleCaptureMenu()">
+        <div class="quick-capture-icon">
+            <i class="fas fa-plus"></i>
+        </div>
+    </div>
+
+    <!-- Capture Menu -->
+    <div class="capture-menu" id="captureMenu">
+        <div class="capture-option" onclick="openQuickCapture('text')">
+            <i class="fas fa-pencil-alt" style="color: #2196F3;"></i>
+            <span>Quick Text Note</span>
+        </div>
+        <div class="capture-option" onclick="openQuickCapture('voice')">
+            <i class="fas fa-microphone" style="color: #4CAF50;"></i>
+            <span>Voice Note</span>
+        </div>
+        <div class="capture-option" onclick="openQuickCapture('video')">
+            <i class="fas fa-video" style="color: #9C27B0;"></i>
+            <span>Video Note</span>
+        </div>
+        <div class="capture-option" onclick="openQuickCapture('file')">
+            <i class="fas fa-paperclip" style="color: #FF9800;"></i>
+            <span>Add Attachment</span>
+        </div>
+    </div>
+
+    <!-- Quick Capture Modal -->
+    <div class="quick-modal" id="quickModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title" id="modalTitle">Quick Capture</div>
+                <div class="close-modal" onclick="closeQuickCapture()">×</div>
+            </div>
+            <div id="captureContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Drag and Drop Functionality
+        document.querySelectorAll('.capture-item').forEach(item => {
+            item.addEventListener('dragstart', handleDragStart);
+            item.addEventListener('dragend', handleDragEnd);
+            item.addEventListener('touchstart', handleTouchStart);
+            item.addEventListener('touchmove', handleTouchMove);
+            item.addEventListener('touchend', handleTouchEnd);
+        });
+
+        function handleDragStart(e) {
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', this.dataset.id);
+            e.dataTransfer.setData('type', this.dataset.type);
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        // Touch support for mobile devices
+        let touchDragging = null;
+
+        function handleTouchStart(e) {
+            touchDragging = this;
+            this.classList.add('dragging');
+        }
+
+        function handleTouchMove(e) {
+            if (!touchDragging) return;
+            e.preventDefault();
+
+            const touch = e.touches[0];
+            const dropZone = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (dropZone && dropZone.closest('#packageDropZone')) {
+                dropZone.closest('#packageDropZone').classList.add('drag-active');
+            }
+        }
+
+        function handleTouchEnd(e) {
+            if (!touchDragging) return;
+
+            const touch = e.changedTouches[0];
+            const dropZone = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (dropZone && dropZone.closest('#packageDropZone')) {
+                addToPackage(touchDragging);
+            }
+
+            touchDragging.classList.remove('dragging');
+            document.querySelectorAll('.drag-active').forEach(el => {
+                el.classList.remove('drag-active');
+            });
+            touchDragging = null;
+        }
+
+        // Quick Capture Functions
+        function toggleCaptureMenu() {
+            const menu = document.getElementById('captureMenu');
+            menu.classList.toggle('active');
+        }
+
+        function openQuickCapture(type) {
+            const modal = document.getElementById('quickModal');
+            const content = document.getElementById('captureContent');
+            const title = document.getElementById('modalTitle');
+            
+            let contentHtml = '';
+            
+            switch(type) {
+                case 'text':
+                    title.textContent = 'Quick Text Note';
+                    contentHtml = `
+                        <textarea 
+                            placeholder="Start typing your idea..." 
+                            style="width: 100%; min-height: 200px; padding: 15px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 15px;"
+                            autofocus
+                        ></textarea>
+                        <button class="action-button new-idea-btn" onclick="saveQuickCapture('text')">
+                            <i class="fas fa-save"></i> Save Idea
+                        </button>
+                    `;
+                    break;
+                case 'voice':
+                    title.textContent = 'Voice Note';
+                    contentHtml = `
+                        <div class="recording-controls">
+                            <button class="record-button" style="background: #2196F3;" onclick="toggleVoiceRecording()">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        <div id="recordingStatus" style="text-align: center; margin-top: 10px;">
+                            Click to start recording
+                        </div>
+                    `;
+                    break;
+                case 'video':
+                    title.textContent = 'Video Note';
+                    contentHtml = `
+                        <div id="videoPreview" style="width: 100%; height: 300px; background: #f5f5f5; border-radius: 8px; margin-bottom: 15px;"></div>
+                        <div class="recording-controls">
+                            <button class="record-button" style="background: #9C27B0;" onclick="toggleVideoRecording()">
+                                <i class="fas fa-video"></i>
+                            </button>
+                        </div>
+                    `;
+                    break;
+                case 'file':
+                    title.textContent = 'Add Attachment';
+                    contentHtml = `
+                        <input type="file" multiple style="display: none;" id="fileInput" onchange="handleFiles(this.files)">
+                        <div style="border: 2px dashed #ddd; padding: 40px; text-align: center; border-radius: 8px; cursor: pointer;"
+                             onclick="document.getElementById('fileInput').click()">
+                            <i class="fas fa-cloud-upload-alt" style="font-size: 40px; color: #666; margin-bottom: 10px;"></i>
+                            <div>Click or drag files here</div>
+                        </div>
+                        <div id="fileList" style="margin-top: 15px;"></div>
+                    `;
+                    break;
+            }
+            
+            content.innerHTML = contentHtml;
+            modal.classList.add('active');
+            document.getElementById('captureMenu').classList.remove('active');
+        }
+
+        function closeQuickCapture() {
+            document.getElementById('quickModal').classList.remove('active');
+        }
+
+        // Media handling functions
+        let mediaRecorder;
+        let recordedChunks = [];
+
+        async function toggleVoiceRecording() {
+            if (!mediaRecorder) {
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    mediaRecorder = new MediaRecorder(stream);
+                    mediaRecorder.ondataavailable = (e) => recordedChunks.push(e.data);
+                    mediaRecorder.onstop = saveRecording;
+                } catch (err) {
+                    alert('Error accessing microphone: ' + err);
+                    return;
+                }
+            }
+
+            const button = document.querySelector('.record-button');
+            const status = document.getElementById('recordingStatus');
+
+            if (mediaRecorder.state === 'inactive') {
+                mediaRecorder.start();
+                button.classList.add('recording');
+                button.style.background = '#f44336';
+                status.textContent = 'Recording... Click to stop';
+            } else {
+                mediaRecorder.stop();
+                button.classList.remove('recording');
+                button.style.background = '#2196F3';
+                status.textContent = 'Recording finished';
+            }
+        }
+
+        function saveRecording() {
+            const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+            const url = URL.createObjectURL(blob);
+            // Here you would typically upload the blob to your server
+            recordedChunks = [];
+        }
+
+        // File handling
+        function handleFiles(files) {
+            const fileList = document.getElementById('fileList');
+            fileList.innerHTML = '';
+            
+            Array.from(files).forEach(file => {
+                const item = document.createElement('div');
+                item.style.padding = '10px';
+                item.style.marginBottom = '5px';
+                item.style.background = '#f5f5f5';
+                item.style.borderRadius = '4px';
+                item.textContent = `${file.name} (${(file.size/1024).toFixed(1)}KB)`;
+                fileList.appendChild(item);
+            });
+        }
+
+        // Add idea entry toggle function
+        function toggleIdeaEntry(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.fa-chevron-down');
+            
+            if (content.style.display === 'none') {
+                content.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.style.display = 'none';
+                icon.style.transform = 'rotate(0)';
+            }
+        }
+
+        // Add new package handling functions
+        const dropZone = document.getElementById('packageDropZone');
+        const packagedItems = document.getElementById('packagedItems');
+
+        dropZone.addEventListener('dragover', handleDragOver);
+        dropZone.addEventListener('dragleave', handleDragLeave);
+        dropZone.addEventListener('drop', handlePackageDrop);
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            this.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            this.classList.remove('drag-over');
+        }
+
+        function handlePackageDrop(e) {
+            e.preventDefault();
+            this.classList.remove('drag-over');
+            
+            const captureId = e.dataTransfer.getData('text/plain');
+            const captureItem = document.querySelector(`[data-id="${captureId}"]`);
+            
+            if (captureItem) {
+                addToPackage(captureItem);
+            }
+        }
+
+        function addToPackage(item) {
+            const type = item.dataset.type;
+            const content = item.querySelector('.capture-content').textContent.trim();
+            
+            const packagedItem = document.createElement('div');
+            packagedItem.className = 'packaged-item';
+            packagedItem.dataset.type = type;
+            packagedItem.innerHTML = `
+                <div class="packaged-content">
+                    <i class="${getTypeIcon(type)}" style="color: ${getTypeColor(type)}; margin-right: 8px;"></i>
+                    ${content}
+                </div>
+                <i class="fas fa-times" style="cursor: pointer;" onclick="removeFromPackage(this)"></i>
+            `;
+            
+            packagedItems.appendChild(packagedItem);
+            updatePlaceholder();
+        }
+
+        function removeFromPackage(btn) {
+            btn.closest('.packaged-item').remove();
+            updatePlaceholder();
+        }
+
+        function updatePlaceholder() {
+            const placeholder = dropZone.querySelector('.package-placeholder');
+            if (packagedItems.children.length > 0) {
+                placeholder.style.display = 'none';
+            } else {
+                placeholder.style.display = 'block';
+            }
+        }
+
+        function getTypeIcon(type) {
+            const icons = {
+                text: 'fas fa-pen-fancy',
+                voice: 'fas fa-microphone-alt',
+                video: 'fas fa-video',
+                file: 'fas fa-paperclip'
+            };
+            return icons[type] || 'fas fa-file';
+        }
+
+        function getTypeColor(type) {
+            const colors = {
+                text: '#2196F3',
+                voice: '#4CAF50',
+                video: '#9C27B0',
+                file: '#FF9800'
+            };
+            return colors[type] || '#666';
+        }
+
+        function savePackage() {
+            const title = document.getElementById('packageTitleInput').value.trim();
+            if (!title) {
+                alert('Please enter a title for your idea package');
+                return;
+            }
+
+            const items = Array.from(packagedItems.children).map(item => ({
+                type: item.dataset.type,
+                content: item.querySelector('.packaged-content').textContent.trim()
+            }));
+
+            if (items.length === 0) {
+                alert('Please add some captures to your package');
+                return;
+            }
+
+            // Here you would typically send to backend
+            console.log('Saving package:', { title, items });
+            
+            // Clear the form after successful save
+            clearPackage();
+        }
+
+        function clearPackage() {
+            document.getElementById('packageTitleInput').value = '';
+            packagedItems.innerHTML = '';
+            updatePlaceholder();
+        }
+
+        function saveQuickCapture(type) {
+            let content;
+            switch(type) {
+                case 'text':
+                    content = document.querySelector('#captureContent textarea').value;
+                    if (!content.trim()) {
+                        alert('Please enter some text');
+                        return;
+                    }
+                    addNewCapture('text', content);
+                    break;
+                case 'voice':
+                    // Handle voice capture
+                    break;
+                case 'video':
+                    // Handle video capture
+                    break;
+                case 'file':
+                    // Handle file capture
+                    break;
+            }
+            closeQuickCapture();
+        }
+
+        function addNewCapture(type, content) {
+            const container = document.querySelector(`.capture-type-section[data-type="${type}"] .capture-items`);
+            const newId = `${type}${Date.now()}`;
+            
+            const captureItem = document.createElement('div');
+            captureItem.className = 'capture-item';
+            captureItem.draggable = true;
+            captureItem.dataset.id = newId;
+            captureItem.dataset.type = type;
+            
+            captureItem.innerHTML = `
+                <div class="capture-content">
+                    <i class="${getTypeIcon(type)}" style="color: ${getTypeColor(type)}; margin-right: 8px;"></i>
+                    ${content}
+                </div>
+                <div class="capture-meta">
+                    <span><i class="far fa-clock"></i> Just now</span>
+                    <i class="fas fa-grip-vertical"></i>
+                </div>
+            `;
+
+            // Add drag event listeners
+            captureItem.addEventListener('dragstart', handleDragStart);
+            captureItem.addEventListener('dragend', handleDragEnd);
+            captureItem.addEventListener('touchstart', handleTouchStart);
+            captureItem.addEventListener('touchmove', handleTouchMove);
+            captureItem.addEventListener('touchend', handleTouchEnd);
+
+            container.insertBefore(captureItem, container.firstChild);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main Board - Idea Development</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Updated color scheme */
+        :root {
+            --primary-color: #4F46E5;    /* Indigo */
+            --secondary-color: #0EA5E9;  /* Sky blue */
+            --accent-color: #8B5CF6;     /* Violet */
+            --success-color: #10B981;    /* Emerald */
+            --warning-color: #F59E0B;    /* Amber */
+            --danger-color: #EF4444;     /* Red */
+            --text-color: #1F2937;       /* Gray 800 */
+            --text-light: #6B7280;       /* Gray 500 */
+            --background-color: #F3F4F6;      /* Light gray background */
+            --card-background: #FFFFFF;        /* White */
+            --border-color: #E5E7EB;     /* Gray 200 */
+            --hover-color: #4338CA;      /* Indigo 700 */
+            
+            /* Section Colors */
+            --workflow-color: #6366F1;     /* Indigo 500 */
+            --rules-color: #10B981;        /* Emerald 500 */
+            --vision-color: #F59E0B;       /* Amber 500 */
+            --roadmap-color: #EC4899;      /* Pink 500 */
+            --components-color: #8B5CF6;    /* Violet 500 */
+            
+            /* Background Colors */
+            --workflow-bg: rgba(99, 102, 241, 0.1);
+            --rules-bg: rgba(16, 185, 129, 0.1);
+            --vision-bg: rgba(245, 158, 11, 0.1);
+            --roadmap-bg: rgba(236, 72, 153, 0.1);
+            --components-bg: rgba(139, 92, 246, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: var(--background-color);
+        }
+
+        /* Updated Workflow Process Section */
+        .workflow-process {
+            background: white;
+            border-top: 4px solid var(--workflow-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 35px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .process-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-top: 20px;
+        }
+
+        .process-step {
+            flex: 1;
+            text-align: center;
+            position: relative;
+            padding: 0 15px;
+        }
+
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .process-step:nth-child(1) .step-icon {
+            background: var(--warning-color);
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+        }
+
+        .process-step:nth-child(2) .step-icon {
+            background: var(--secondary-color);
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+        }
+
+        .process-step:nth-child(3) .step-icon {
+            background: var(--accent-color);
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.2);
+        }
+
+        .process-step:nth-child(4) .step-icon {
+            background: var(--primary-color);
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);
+        }
+
+        .step-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .step-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        /* Updated Icons and Colors in Content */
+        .section-title i {
+            font-size: 24px;
+        }
+
+        .rule-icon {
+            color: var(--secondary-color);
+        }
+
+        .milestone {
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .component-card {
+            border-left: 4px solid var(--primary-color);
+            transition: transform 0.2s ease;
+        }
+
+        .component-card:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Three Column Layout */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .content-section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Rules Section */
+        .rules-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .rule-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        /* Vision Section */
+        .vision-map {
+            margin: 20px 0;
+            padding: 20px;
+            background: var(--vision-bg);
+            border-radius: 8px;
+        }
+
+        .vision-text {
+            line-height: 1.6;
+            color: #444;
+        }
+
+        /* Roadmap Section */
+        .milestone {
+            margin-bottom: 20px;
+            padding-left: 20px;
+            border-left: 2px solid var(--primary-color);
+        }
+
+        .milestone-date {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        /* Core Components Section */
+        .core-components {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .components-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .component-card {
+            padding: 20px;
+            border-radius: 8px;
+            background: var(--components-bg);
+            border-left: 4px solid var(--components-color);
+        }
+
+        .component-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--primary-color);
+        }
+
+        .process-arrow {
+            position: absolute;
+            top: 30px;
+            right: -15px;
+            color: var(--primary-color);
+            font-size: 20px;
+            z-index: 1;
+        }
+
+        .process-step:last-child .process-arrow {
+            display: none;
+        }
+
+        /* Workflow Summary Boxes */
+        .workflow-summary {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-box {
+            flex: 1;
+            background: var(--workflow-bg);
+            border-radius: 12px;
+            padding: 15px;
+            border-top: 4px solid;
+        }
+
+        .summary-box[data-step="capture"] { border-color: var(--warning-color); }
+        .summary-box[data-step="package"] { border-color: var(--secondary-color); }
+        .summary-box[data-step="define"] { border-color: var(--accent-color); }
+        .summary-box[data-step="generate"] { border-color: var(--primary-color); }
+
+        .summary-count {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        /* Action Buttons */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .add-btn {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .add-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .edit-btn {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background: #7C3AED;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .delete-btn {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background: #DC2626;
+            transform: translateY(-1px);
+        }
+
+        /* List Item Actions */
+        .list-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            opacity: 0;
+            transition: all 0.2s ease;
+        }
+
+        .rule-item:hover .list-item-actions,
+        .milestone:hover .list-item-actions {
+            opacity: 1;
+        }
+
+        .action-icon {
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .action-icon.edit {
+            color: var(--accent-color);
+        }
+
+        .action-icon.delete {
+            color: var(--danger-color);
+        }
+
+        .action-icon:hover {
+            background: var(--border-color);
+            transform: translateY(-1px);
+        }
+
+        /* Updated Summary Boxes */
+        .summary-box {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            border-top: 4px solid;
+            transition: transform 0.2s ease;
+        }
+
+        .summary-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Summary Section Styles */
+        .board-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-section {
+            margin-bottom: 25px;
+        }
+
+        .summary-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .summary-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Markdown-style Summary */
+        .summary-content {
+            font-family: 'Roboto Mono', monospace;
+            white-space: pre-wrap;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            border-left: 4px solid;
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-color);
+        }
+
+        .summary-content h1 {
+            font-size: 1.5em;
+            margin-bottom: 1em;
+            color: var(--primary-color);
+        }
+
+        .summary-content h2 {
+            font-size: 1.2em;
+            margin: 1em 0;
+            color: var(--secondary-color);
+        }
+
+        .summary-content ul {
+            list-style-type: none;
+            padding-left: 1em;
+        }
+
+        .summary-content li {
+            position: relative;
+            padding-left: 1.5em;
+            margin-bottom: 0.5em;
+        }
+
+        .summary-content li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: var(--accent-color);
+        }
+
+        .summary-content code {
+            background: #e2e8f0;
+            padding: 2px 4px;
+            border-radius: 4px;
+            font-size: 0.9em;
+        }
+
+        /* Generate Kanban Button */
+        .generate-kanban {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+            color: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-weight: 500;
+            z-index: 1000;
+        }
+
+        .generate-kanban:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+        }
+
+        .generate-kanban i {
+            font-size: 18px;
+        }
+
+        /* Section Styling Updates */
+        .workflow-process .section-title i {
+            color: var(--workflow-color);
+        }
+
+        .content-section:nth-child(1) {
+            border-top: 4px solid var(--rules-color);
+        }
+
+        .content-section:nth-child(1) .section-title i {
+            color: var(--rules-color);
+        }
+
+        .rule-item {
+            background: var(--rules-bg);
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 10px;
+        }
+
+        .content-section:nth-child(2) {
+            border-top: 4px solid var(--vision-color);
+        }
+
+        .content-section:nth-child(2) .section-title i {
+            color: var(--vision-color);
+        }
+
+        .content-section:nth-child(3) {
+            border-top: 4px solid var(--roadmap-color);
+        }
+
+        .content-section:nth-child(3) .section-title i {
+            color: var(--roadmap-color);
+        }
+
+        .milestone {
+            background: var(--roadmap-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--roadmap-color);
+        }
+
+        .core-components {
+            border-top: 4px solid var(--components-color);
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .core-components .section-title i {
+            color: var(--components-color);
+        }
+
+        .component-card {
+            background: var(--components-bg);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--components-color);
+        }
+
+        /* Summary Section Colors */
+        .board-summary .summary-section:nth-child(1) .summary-content {
+            border-left-color: var(--workflow-color);
+            background: var(--workflow-bg);
+        }
+
+        .board-summary .summary-section:nth-child(2) .summary-content {
+            border-left-color: var(--rules-color);
+            background: var(--rules-bg);
+        }
+
+        .board-summary .summary-section:nth-child(3) .summary-content {
+            border-left-color: var(--vision-color);
+            background: var(--vision-bg);
+        }
+
+        .board-summary .summary-section:nth-child(4) .summary-content {
+            border-left-color: var(--roadmap-color);
+            background: var(--roadmap-bg);
+        }
+
+        .board-summary .summary-section:nth-child(5) .summary-content {
+            border-left-color: var(--components-color);
+            background: var(--components-bg);
+        }
+
+        /* Button Color Updates */
+        .add-btn {
+            background: var(--success-color);
+        }
+
+        .edit-btn {
+            background: var(--accent-color);
+        }
+
+        .generate-kanban {
+            background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+        }
+
+        .generate-kanban:hover {
+            background: linear-gradient(135deg, var(--accent-color), var(--primary-color));
+        }
+
+        /* Summary Box Colors */
+        .summary-box[data-step="capture"] {
+            background: var(--workflow-bg);
+        }
+
+        .summary-box[data-step="package"] {
+            background: var(--rules-bg);
+        }
+
+        .summary-box[data-step="define"] {
+            background: var(--vision-bg);
+        }
+
+        .summary-box[data-step="generate"] {
+            background: var(--components-bg);
+        }
+
+        /* Generate Summary Button */
+        .generate-summary {
+            width: 100%;
+            padding: 15px;
+            margin: 30px 0;
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.2);
+        }
+
+        .generate-summary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(79, 70, 229, 0.3);
+            background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+        }
+
+        /* Board Summary Collapse/Expand */
+        .board-summary {
+            display: none;
+            transition: all 0.3s ease;
+        }
+
+        .board-summary.expanded {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .summary-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-toggle i {
+            transition: transform 0.3s ease;
+        }
+
+        .summary-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+
+        /* Confirmation Dialog */
+        .confirmation-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            display: none;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .dialog-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+        }
+
+        .dialog-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-color);
+        }
+
+        .dialog-content {
+            margin-bottom: 20px;
+            line-height: 1.6;
+            color: var(--text-light);
+        }
+
+        .dialog-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Step by Step Generation */
+        .summary-section {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+
+        .summary-section.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Generation Progress */
+        .generation-progress {
+            height: 4px;
+            background: var(--border-color);
+            border-radius: 2px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        /* Quick Summary Dialog */
+        .quick-summary-dialog {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0, 0, 0, 0.15);
+            z-index: 1001;
+            width: 600px;
+            max-width: 90vw;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .quick-summary-item {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        .quick-summary-item.visible {
+            opacity: 1;
+            transform: translateY(0);
+            transition: all 0.3s ease;
+        }
+
+        .quick-summary-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .quick-summary-workflow { background: var(--workflow-bg); }
+        .quick-summary-rules { background: var(--rules-bg); }
+        .quick-summary-vision { background: var(--vision-bg); }
+        .quick-summary-roadmap { background: var(--roadmap-bg); }
+        .quick-summary-components { background: var(--components-bg); }
+
+        .quick-summary-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .quick-summary-content {
+            color: var(--text-light);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .quick-summary-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Updated Workflow Process Section -->
+    <div class="workflow-process">
+        <div class="section-title">
+            <i class="fas fa-brain"></i>
+            Idea Development Workflow
+        </div>
+        <div class="process-steps">
+            <div class="process-step">
+                <div class="step-icon">
+                    <i class="fas fa-sparkles"></i>
+                </div>
+                <div class="step-title">Capture</div>
+                <div class="step-description">Instantly capture ideas in any format</div>
+                <i class="fas fa-chevron-right process-arrow"></i>
+            </div>
+            <div class="process-step">
+                <div class="step-icon">
+                    <i class="fas fa-box-archive"></i>
+                </div>
+                <div class="step-title">Package</div>
+                <div class="step-description">Organize captures into structured ideas</div>
+                <i class="fas fa-chevron-right process-arrow"></i>
+            </div>
+            <div class="process-step">
+                <div class="step-icon">
+                    <i class="fas fa-compass"></i>
+                </div>
+                <div class="step-title">Define</div>
+                <div class="step-description">Shape your idea's purpose and goals</div>
+                <i class="fas fa-chevron-right process-arrow"></i>
+            </div>
+            <div class="process-step">
+                <div class="step-icon">
+                    <i class="fas fa-wand-sparkles"></i>
+                </div>
+                <div class="step-title">Generate</div>
+                <div class="step-description">Enhance ideas with AI assistance</div>
+            </div>
+        </div>
+        <div class="workflow-summary">
+            <div class="summary-box" data-step="capture">
+                <div class="summary-count">24</div>
+                <div class="summary-label">Recent Captures</div>
+                <div class="summary-detail">12 text, 8 voice, 4 files</div>
+            </div>
+            <div class="summary-box" data-step="package">
+                <div class="summary-count">8</div>
+                <div class="summary-label">Packaged Ideas</div>
+                <div class="summary-detail">3 in progress, 5 completed</div>
+            </div>
+            <div class="summary-box" data-step="define">
+                <div class="summary-count">6</div>
+                <div class="summary-label">Defined Ideas</div>
+                <div class="summary-detail">2 pending review</div>
+            </div>
+            <div class="summary-box" data-step="generate">
+                <div class="summary-count">4</div>
+                <div class="summary-label">AI Enhanced</div>
+                <div class="summary-detail">10 suggestions</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Updated Three Column Layout -->
+    <div class="main-content">
+        <!-- Rules & Principles -->
+        <div class="content-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-scroll"></i>
+                    Rules & Principles
+                </div>
+                <button class="action-btn add-btn">
+                    <i class="fas fa-plus"></i>
+                    Add Rule
+                </button>
+            </div>
+            <ul class="rules-list">
+                <li class="rule-item">
+                    <i class="fas fa-check-circle rule-icon"></i>
+                    <span>Capture ideas instantly</span>
+                    <div class="list-item-actions">
+                        <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                        <i class="fas fa-trash-alt action-icon delete" title="Delete"></i>
+                    </div>
+                </li>
+                <li class="rule-item">
+                    <i class="fas fa-puzzle-piece rule-icon"></i>
+                    <span>Break down complex ideas</span>
+                    <div class="list-item-actions">
+                        <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                        <i class="fas fa-trash-alt action-icon delete" title="Delete"></i>
+                    </div>
+                </li>
+                <li class="rule-item">
+                    <i class="fas fa-rotate rule-icon"></i>
+                    <span>Review and refine regularly</span>
+                    <div class="list-item-actions">
+                        <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                        <i class="fas fa-trash-alt action-icon delete" title="Delete"></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Vision -->
+        <div class="content-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-lightbulb"></i>
+                    Vision
+                </div>
+                <button class="action-btn edit-btn">
+                    <i class="fas fa-edit"></i>
+                    Edit Vision
+                </button>
+            </div>
+            <div class="vision-map">
+                <div class="section-header">
+                    <h3>Mind Map</h3>
+                    <button class="action-btn add-btn">
+                        <i class="fas fa-plus"></i>
+                        Add Node
+                    </button>
+                </div>
+                <!-- Mind map content -->
+            </div>
+            <div class="vision-text">
+                Our vision is to create a seamless idea development system that transforms raw thoughts into actionable projects. Through intelligent organization and AI-powered enhancement, we aim to make idea development more efficient and effective.
+                <div class="list-item-actions">
+                    <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Roadmap -->
+        <div class="content-section">
+            <div class="section-header">
+                <div class="section-title">
+                    <i class="fas fa-route"></i>
+                    Roadmap
+                </div>
+                <button class="action-btn add-btn">
+                    <i class="fas fa-plus"></i>
+                    Add Milestone
+                </button>
+            </div>
+            <div class="milestone">
+                <div class="milestone-date">
+                    <i class="fas fa-flag"></i>
+                    Phase 1: Foundation
+                </div>
+                <div class="milestone-description">
+                    Implement basic capture and organization features
+                    <div class="list-item-actions">
+                        <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                        <i class="fas fa-trash-alt action-icon delete" title="Delete"></i>
+                    </div>
+                </div>
+            </div>
+            <div class="milestone">
+                <div class="milestone-date">Phase 2: Enhancement</div>
+                <div class="milestone-description">Add AI-powered idea generation and refinement</div>
+            </div>
+            <!-- Add more milestones -->
+        </div>
+    </div>
+
+    <!-- Updated Core Components -->
+    <div class="core-components">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-cubes"></i>
+                Core Components
+            </div>
+            <button class="action-btn add-btn">
+                <i class="fas fa-plus"></i>
+                Add Component
+            </button>
+        </div>
+        <div class="components-grid">
+            <div class="component-card">
+                <div class="component-title">
+                    <div class="title-content">
+                        <i class="fas fa-bolt"></i>
+                        Idea Capture
+                    </div>
+                    <div class="list-item-actions">
+                        <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                        <i class="fas fa-trash-alt action-icon delete" title="Delete"></i>
+                    </div>
+                </div>
+                <div class="component-description">Quick and efficient idea recording system</div>
+            </div>
+            <div class="component-card">
+                <div class="component-title">
+                    <i class="fas fa-layer-group"></i>
+                    Organization
+                    <div class="list-item-actions">
+                        <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                        <i class="fas fa-trash-alt action-icon delete" title="Delete"></i>
+                    </div>
+                </div>
+                <div class="component-description">Structured approach to idea management</div>
+            </div>
+            <div class="component-card">
+                <div class="component-title">
+                    <i class="fas fa-robot"></i>
+                    AI Integration
+                    <div class="list-item-actions">
+                        <i class="fas fa-edit action-icon edit" title="Edit"></i>
+                        <i class="fas fa-trash-alt action-icon delete" title="Delete"></i>
+                    </div>
+                </div>
+                <div class="component-description">Smart idea enhancement and generation</div>
+            </div>
+            <!-- Add more components -->
+        </div>
+    </div>
+
+    <!-- Generate Summary Button -->
+    <button class="generate-summary" onclick="generateAndToggleSummary()">
+        <i class="fas fa-clipboard-list"></i>
+        <span class="summary-toggle">
+            Generate Board Summary
+            <i class="fas fa-chevron-down"></i>
+        </span>
+    </button>
+
+    <!-- Board Summary Section -->
+    <div class="board-summary" id="boardSummary">
+        <div class="section-header">
+            <div class="section-title">
+                <i class="fas fa-clipboard-list"></i>
+                Board Summary
+            </div>
+            <button class="action-btn edit-btn">
+                <i class="fas fa-edit"></i>
+                Edit Summary
+            </button>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">
+                <i class="fas fa-brain"></i>
+                Workflow Process
+            </div>
+            <div class="summary-content" contenteditable="true">
+                Our idea development process follows four key stages: Capture (24 recent entries), 
+                Package (8 ideas in progress), Define (6 ideas being shaped), and Generate 
+                (4 AI-enhanced ideas). This workflow ensures systematic idea development.
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">
+                <i class="fas fa-scroll"></i>
+                Rules & Principles
+            </div>
+            <div class="summary-content" contenteditable="true">
+                Core principles include instant idea capture, breaking down complex concepts, 
+                and regular review cycles. These guidelines ensure consistent idea development 
+                and maintain quality standards.
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">
+                <i class="fas fa-lightbulb"></i>
+                Vision Overview
+            </div>
+            <div class="summary-content" contenteditable="true">
+                Our vision focuses on creating a seamless idea development system that transforms 
+                raw thoughts into actionable projects. Through intelligent organization and 
+                AI-powered enhancement, we aim to make idea development more efficient and effective.
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">
+                <i class="fas fa-route"></i>
+                Roadmap Progress
+            </div>
+            <div class="summary-content" contenteditable="true">
+                Currently in Phase 1: Foundation, implementing basic capture and organization features. 
+                Next milestone is Phase 2: Enhancement, focusing on AI-powered idea generation and refinement. 
+                Progress is on track with core features being developed.
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="summary-section-title">
+                <i class="fas fa-cubes"></i>
+                Core Components Status
+            </div>
+            <div class="summary-content" contenteditable="true">
+                Key components include Idea Capture system, Organization framework, and AI Integration. 
+                Each component is being developed with focus on user experience and efficiency. 
+                Integration points are being established between components.
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Kanban Button -->
+    <button class="generate-kanban" onclick="generateKanban()">
+        <i class="fas fa-columns"></i>
+        Generate Kanban Board
+    </button>
+
+    <script>
+        function showConfirmationDialog(message, onConfirm) {
+            const dialog = document.createElement('div');
+            dialog.className = 'confirmation-dialog';
+            dialog.innerHTML = `
+                <div class="dialog-title">Confirmation Required</div>
+                <div class="dialog-content">${message}</div>
+                <div class="dialog-actions">
+                    <button class="action-btn" onclick="closeDialog()">Cancel</button>
+                    <button class="action-btn add-btn" onclick="confirmDialog()">Confirm</button>
+                </div>
+            `;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'dialog-overlay';
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(dialog);
+
+            dialog.style.display = 'block';
+            overlay.style.display = 'block';
+
+            window.currentConfirmCallback = onConfirm;
+        }
+
+        function closeDialog() {
+            const dialog = document.querySelector('.confirmation-dialog');
+            const overlay = document.querySelector('.dialog-overlay');
+            if (dialog && overlay) {
+                dialog.remove();
+                overlay.remove();
+            }
+        }
+
+        function confirmDialog() {
+            if (window.currentConfirmCallback) {
+                window.currentConfirmCallback();
+            }
+            closeDialog();
+        }
+
+        function showQuickSummary() {
+            const dialog = document.createElement('div');
+            dialog.className = 'quick-summary-dialog';
+            dialog.innerHTML = `
+                <div class="dialog-title">Quick Summary Review</div>
+                <div id="quickSummaryContent"></div>
+                <div class="quick-summary-actions">
+                    <button class="action-btn" onclick="closeQuickSummary()">Cancel</button>
+                    <button class="action-btn add-btn" onclick="proceedWithGeneration()">Generate Full Summary</button>
+                </div>
+            `;
+
+            const overlay = document.createElement('div');
+            overlay.className = 'dialog-overlay';
+
+            document.body.appendChild(overlay);
+            document.body.appendChild(dialog);
+
+            generateQuickSummaryItems();
+        }
+
+        function generateQuickSummaryItems() {
+            const summaryContent = document.getElementById('quickSummaryContent');
+            const sections = [
+                {
+                    name: 'Workflow Status',
+                    icon: 'fas fa-brain',
+                    class: 'workflow',
+                    content: getWorkflowSummary()
+                },
+                {
+                    name: 'Rules & Principles',
+                    icon: 'fas fa-scroll',
+                    class: 'rules',
+                    content: getRulesSummary()
+                },
+                {
+                    name: 'Vision Overview',
+                    icon: 'fas fa-lightbulb',
+                    class: 'vision',
+                    content: getVisionSummary()
+                },
+                {
+                    name: 'Roadmap Progress',
+                    icon: 'fas fa-route',
+                    class: 'roadmap',
+                    content: getRoadmapSummary()
+                },
+                {
+                    name: 'Core Components',
+                    icon: 'fas fa-cubes',
+                    class: 'components',
+                    content: getComponentsSummary()
+                }
+            ];
+
+            sections.forEach((section, index) => {
+                const item = document.createElement('div');
+                item.className = `quick-summary-item quick-summary-${section.class}`;
+                item.innerHTML = `
+                    <div class="quick-summary-header">
+                        <i class="${section.icon}"></i>
+                        ${section.name}
+                    </div>
+                    <div class="quick-summary-content">${section.content}</div>
+                `;
+
+                summaryContent.appendChild(item);
+
+                setTimeout(() => {
+                    item.classList.add('visible');
+                }, index * 200);
+            });
+        }
+
+        function getWorkflowSummary() {
+            const capture = document.querySelector('[data-step="capture"] .summary-count')?.textContent || '0';
+            const package = document.querySelector('[data-step="package"] .summary-count')?.textContent || '0';
+            const define = document.querySelector('[data-step="define"] .summary-count')?.textContent || '0';
+            const generate = document.querySelector('[data-step="generate"] .summary-count')?.textContent || '0';
+            
+            return `${capture} captures, ${package} packages, ${define} defined ideas, ${generate} AI enhancements`;
+        }
+
+        function getRulesSummary() {
+            const rules = Array.from(document.querySelectorAll('.rule-item span'))
+                .map(rule => rule.textContent.trim());
+            return rules.length ? rules.join(', ') : 'No rules defined';
+        }
+
+        function getVisionSummary() {
+            return document.querySelector('.vision-text')?.textContent.trim() || 'Vision not defined';
+        }
+
+        function getRoadmapSummary() {
+            const milestones = Array.from(document.querySelectorAll('.milestone'))
+                .map(m => m.querySelector('.milestone-date').textContent.trim());
+            return milestones.length ? milestones.join(' → ') : 'No milestones defined';
+        }
+
+        function getComponentsSummary() {
+            const components = Array.from(document.querySelectorAll('.component-card .component-title'))
+                .map(c => c.textContent.trim());
+            return components.length ? components.join(', ') : 'No components defined';
+        }
+
+        function closeQuickSummary() {
+            const dialog = document.querySelector('.quick-summary-dialog');
+            const overlay = document.querySelector('.dialog-overlay');
+            if (dialog && overlay) {
+                dialog.remove();
+                overlay.remove();
+            }
+        }
+
+        function proceedWithGeneration() {
+            closeQuickSummary();
+            generateSummaryStepByStep();
+        }
+
+        function generateAndToggleSummary() {
+            const message = `
+                Before generating the board summary:
+                - All sections should be reviewed
+                - AI-generated content should be verified
+                - Changes should be saved
+                
+                Would you like to proceed with generating the summary?
+            `;
+
+            showConfirmationDialog(message, () => {
+                showQuickSummary();
+            });
+        }
+
+        function generateSummaryStepByStep() {
+            const summarySection = document.getElementById('boardSummary');
+            summarySection.classList.add('expanded');
+            
+            const sections = summarySection.querySelectorAll('.summary-section');
+            const totalSections = sections.length;
+            
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+            });
+
+            // Add progress bar
+            const progressBar = document.createElement('div');
+            progressBar.className = 'generation-progress';
+            progressBar.innerHTML = '<div class="progress-bar"></div>';
+            summarySection.insertBefore(progressBar, summarySection.firstChild);
+
+            // Generate content for each section with delay
+            sections.forEach((section, index) => {
+                setTimeout(() => {
+                    generateSectionContent(section);
+                    section.classList.add('visible');
+                    
+                    // Update progress bar
+                    const progress = ((index + 1) / totalSections) * 100;
+                    progressBar.querySelector('.progress-bar').style.width = `${progress}%`;
+                    
+                    if (index === totalSections - 1) {
+                        // Remove progress bar after completion
+                        setTimeout(() => {
+                            progressBar.remove();
+                        }, 1000);
+                    }
+                }, index * 800);
+            });
+
+            const toggleSpan = document.querySelector('.summary-toggle');
+            toggleSpan.classList.add('expanded');
+            toggleSpan.childNodes[0].textContent = 'Collapse Board Summary ';
+        }
+
+        function generateKanban() {
+            const message = `
+                Before generating the Kanban board:
+                - Board summary should be reviewed
+                - All sections should be finalized
+                - Content should be verified
+                
+                Would you like to proceed with generating the Kanban board?
+            `;
+
+            showConfirmationDialog(message, () => {
+                // Collect data and generate Kanban board
+                const kanbanData = collectKanbanData();
+                console.log('Generating Kanban board with data:', kanbanData);
+                alert('Generating Kanban board...');
+            });
+        }
+
+        function collectKanbanData() {
+            // Collect data from all sections
+            const kanbanData = {
+                workflow: {
+                    capture: document.querySelector('[data-step="capture"] .summary-count').textContent,
+                    package: document.querySelector('[data-step="package"] .summary-count').textContent,
+                    define: document.querySelector('[data-step="define"] .summary-count').textContent,
+                    generate: document.querySelector('[data-step="generate"] .summary-count').textContent
+                },
+                rules: Array.from(document.querySelectorAll('.rule-item')).map(rule => rule.textContent.trim()),
+                milestones: Array.from(document.querySelectorAll('.milestone')).map(milestone => ({
+                    phase: milestone.querySelector('.milestone-date').textContent,
+                    description: milestone.querySelector('.milestone-description').textContent
+                }))
+            };
+
+            return kanbanData;
+        }
+
+        function generateSectionContent(section) {
+            const type = section.querySelector('.summary-section-title').textContent.trim();
+            let content = '';
+
+            switch(type) {
+                case 'Workflow Process':
+                    content = formatWorkflowSummary();
+                    break;
+                case 'Rules & Principles':
+                    content = formatRulesSummary();
+                    break;
+                case 'Vision Overview':
+                    content = formatVisionSummary();
+                    break;
+                case 'Roadmap Progress':
+                    content = formatRoadmapSummary();
+                    break;
+                case 'Core Components Status':
+                    content = formatComponentsSummary();
+                    break;
+            }
+
+            section.querySelector('.summary-content').innerHTML = content;
+        }
+
+        function formatWorkflowSummary() {
+            const workflow = {
+                capture: document.querySelector('[data-step="capture"] .summary-count')?.textContent || '0',
+                package: document.querySelector('[data-step="package"] .summary-count')?.textContent || '0',
+                define: document.querySelector('[data-step="define"] .summary-count')?.textContent || '0',
+                generate: document.querySelector('[data-step="generate"] .summary-count')?.textContent || '0'
+            };
+
+            return `# Workflow Process Summary
+
+## Current Status
+• Captures: \`${workflow.capture}\` active entries
+• Packages: \`${workflow.package}\` in development
+• Defined Ideas: \`${workflow.define}\` in refinement
+• Generated Content: \`${workflow.generate}\` AI enhancements
+
+## Process Flow
+1. Capture → Package → Define → Generate
+2. Total Items in Pipeline: \`${parseInt(workflow.capture) + parseInt(workflow.package) + parseInt(workflow.define) + parseInt(workflow.generate)}\`
+`;
+        }
+
+        function formatRulesSummary() {
+            const rules = Array.from(document.querySelectorAll('.rule-item span'))
+                .map(rule => rule.textContent.trim());
+
+            return `# Rules & Principles
+
+## Core Guidelines
+${rules.map(rule => `• ${rule}`).join('\n')}
+
+## Implementation Status
+• Total Rules: \`${rules.length}\`
+• Status: ${rules.length > 0 ? '`Active`' : '`Pending`'}
+`;
+        }
+
+        function formatVisionSummary() {
+            const vision = document.querySelector('.vision-text')?.textContent.trim();
+
+            return `# Vision Overview
+
+## Main Vision
+${vision}
+
+## Key Points
+• Long-term Goals
+• Strategic Direction
+• Innovation Focus
+• Growth Trajectory
+`;
+        }
+
+        function formatRoadmapSummary() {
+            const milestones = Array.from(document.querySelectorAll('.milestone')).map(m => ({
+                phase: m.querySelector('.milestone-date').textContent.trim(),
+                desc: m.querySelector('.milestone-description').textContent.trim()
+            }));
+
+            return `# Roadmap Progress
+
+## Timeline
+${milestones.map(m => `• ${m.phase}\n  ${m.desc}`).join('\n\n')}
+
+## Status Overview
+• Total Phases: \`${milestones.length}\`
+• Current Phase: \`${milestones[0]?.phase || 'Not Started'}\`
+`;
+        }
+
+        function formatComponentsSummary() {
+            const components = Array.from(document.querySelectorAll('.component-card')).map(c => ({
+                title: c.querySelector('.component-title').textContent.trim(),
+                desc: c.querySelector('.component-description').textContent.trim()
+            }));
+
+            return `# Core Components Status
+
+## Active Components
+${components.map(c => `• ${c.title}\n  ${c.desc}`).join('\n\n')}
+
+## Overview
+• Total Components: \`${components.length}\`
+• Integration Status: \`In Progress\`
+`;
+        }
+
+        // Make summary sections editable
+        document.querySelectorAll('.summary-content').forEach(content => {
+            content.addEventListener('blur', function() {
+                // Here you would typically save the updated content
+                console.log('Updated content:', this.textContent);
+            });
+        });
+    </script>
+</body>
+</html>

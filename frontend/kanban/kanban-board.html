@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kanban Board</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #4F46E5;
+            --secondary-color: #0EA5E9;
+            --success-color: #10B981;
+            --warning-color: #F59E0B;
+            --danger-color: #EF4444;
+            --text-color: #1F2937;
+            --border-color: #E5E7EB;
+            
+            /* Column Colors */
+            --backlog-color: #6B7280;
+            --todo-color: #8B5CF6;
+            --process-color: #0EA5E9;
+            --testing-color: #F59E0B;
+            --done-color: #10B981;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background: #F3F4F6;
+        }
+
+        /* Kanban Board Container */
+        .kanban-board {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            overflow-x: auto;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Column Styles */
+        .kanban-column {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .column-header {
+            padding: 16px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .column-title {
+            font-weight: 600;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .column-count {
+            background: var(--border-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        /* Card Styles */
+        .kanban-cards {
+            padding: 16px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .kanban-card {
+            background: white;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid;
+            cursor: grab;
+            transition: all 0.2s ease;
+        }
+
+        .kanban-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .card-title {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .card-priority {
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .priority-high { background: #FEE2E2; color: #DC2626; }
+        .priority-medium { background: #FEF3C7; color: #D97706; }
+        .priority-low { background: #ECFDF5; color: #059669; }
+
+        .card-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #6B7280;
+            margin-top: 12px;
+        }
+
+        /* Column-specific styles */
+        .backlog { border-top: 4px solid var(--backlog-color); }
+        .todo { border-top: 4px solid var(--todo-color); }
+        .in-process { border-top: 4px solid var(--process-color); }
+        .testing { border-top: 4px solid var(--testing-color); }
+        .done { border-top: 4px solid var(--done-color); }
+
+        /* Drag and Drop Styles */
+        .kanban-card.dragging {
+            opacity: 0.5;
+            cursor: grabbing;
+        }
+
+        .kanban-cards.drag-over {
+            background: #F8FAFC;
+        }
+
+        /* Add Card Button */
+        .add-card {
+            margin: 16px;
+            padding: 8px;
+            border: 2px dashed var(--border-color);
+            border-radius: 8px;
+            color: #6B7280;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .add-card:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        /* Project Summary Section */
+        .project-summary {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .project-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--text-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .project-stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-item {
+            padding: 8px 16px;
+            background: var(--border-color);
+            border-radius: 8px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            padding: 20px;
+            border-radius: 8px;
+            background: #F8FAFC;
+        }
+
+        .summary-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+        }
+
+        .summary-card p {
+            margin: 0;
+            color: var(--text-color);
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .achievement-list {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+        }
+
+        .achievement-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            border-left: 4px solid var(--success-color);
+            min-width: 200px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .achievement-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--text-color);
+        }
+
+        .achievement-desc {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+    <!-- Project Summary Section -->
+    <div class="project-summary">
+        <div class="summary-header">
+            <div class="project-title">
+                <i class="fas fa-lightbulb"></i>
+                Project Vision Board
+            </div>
+            <div class="project-stats">
+                <div class="stat-item">
+                    <i class="fas fa-tasks"></i>
+                    Total Tasks: <strong>0</strong>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    In Progress: <strong>0</strong>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-check-circle"></i>
+                    Completed: <strong>0</strong>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-grid">
+            <div class="summary-card">
+                <h3>
+                    <i class="fas fa-bullseye"></i>
+                    Core Idea
+                </h3>
+                <p>A comprehensive project management system that transforms ideas into actionable tasks through an intuitive Kanban workflow.</p>
+            </div>
+            <div class="summary-card">
+                <h3>
+                    <i class="fas fa-question-circle"></i>
+                    Key Reasons
+                </h3>
+                <p>Streamline idea development, enhance team collaboration, and maintain clear project visibility through organized task management.</p>
+            </div>
+            <div class="summary-card">
+                <h3>
+                    <i class="fas fa-chart-line"></i>
+                    Expected Impact
+                </h3>
+                <p>Improve project completion rates, reduce development cycles, and increase team productivity through structured workflow.</p>
+            </div>
+        </div>
+
+        <div class="achievement-list">
+            <div class="achievement-item">
+                <div class="achievement-title">
+                    <i class="fas fa-star"></i>
+                    Milestone 1
+                </div>
+                <div class="achievement-desc">Initial system setup and workflow definition completed</div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-title">
+                    <i class="fas fa-trophy"></i>
+                    Milestone 2
+                </div>
+                <div class="achievement-desc">Team onboarding and process implementation</div>
+            </div>
+            <div class="achievement-item">
+                <div class="achievement-title">
+                    <i class="fas fa-award"></i>
+                    Milestone 3
+                </div>
+                <div class="achievement-desc">First project successfully completed using new system</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="kanban-board">
+        <!-- Backlog Column -->
+        <div class="kanban-column backlog">
+            <div class="column-header">
+                <div class="column-title">
+                    <i class="fas fa-inbox"></i>
+                    Backlog
+                </div>
+                <span class="column-count">0</span>
+            </div>
+            <div class="kanban-cards" data-column="backlog">
+                <div class="add-card">
+                    <i class="fas fa-plus"></i> Add Card
+                </div>
+            </div>
+        </div>
+
+        <!-- To Do Column -->
+        <div class="kanban-column todo">
+            <div class="column-header">
+                <div class="column-title">
+                    <i class="fas fa-list"></i>
+                    To Do
+                </div>
+                <span class="column-count">0</span>
+            </div>
+            <div class="kanban-cards" data-column="todo">
+                <div class="add-card">
+                    <i class="fas fa-plus"></i> Add Card
+                </div>
+            </div>
+        </div>
+
+        <!-- In Process Column -->
+        <div class="kanban-column in-process">
+            <div class="column-header">
+                <div class="column-title">
+                    <i class="fas fa-spinner"></i>
+                    In Process
+                </div>
+                <span class="column-count">0</span>
+            </div>
+            <div class="kanban-cards" data-column="in-process">
+                <div class="add-card">
+                    <i class="fas fa-plus"></i> Add Card
+                </div>
+            </div>
+        </div>
+
+        <!-- Testing Column -->
+        <div class="kanban-column testing">
+            <div class="column-header">
+                <div class="column-title">
+                    <i class="fas fa-vial"></i>
+                    Testing
+                </div>
+                <span class="column-count">0</span>
+            </div>
+            <div class="kanban-cards" data-column="testing">
+                <div class="add-card">
+                    <i class="fas fa-plus"></i> Add Card
+                </div>
+            </div>
+        </div>
+
+        <!-- Done Column -->
+        <div class="kanban-column done">
+            <div class="column-header">
+                <div class="column-title">
+                    <i class="fas fa-check-circle"></i>
+                    Done
+                </div>
+                <span class="column-count">0</span>
+            </div>
+            <div class="kanban-cards" data-column="done">
+                <div class="add-card">
+                    <i class="fas fa-plus"></i> Add Card
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            setupDragAndDrop();
+            setupAddCards();
+            updateColumnCounts();
+            updateProjectStats();
+        });
+
+        function setupDragAndDrop() {
+            const cards = document.querySelectorAll('.kanban-card');
+            const columns = document.querySelectorAll('.kanban-cards');
+
+            cards.forEach(card => {
+                card.setAttribute('draggable', true);
+                card.addEventListener('dragstart', handleDragStart);
+                card.addEventListener('dragend', handleDragEnd);
+            });
+
+            columns.forEach(column => {
+                column.addEventListener('dragover', handleDragOver);
+                column.addEventListener('dragleave', handleDragLeave);
+                column.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            e.target.classList.add('dragging');
+        }
+
+        function handleDragEnd(e) {
+            e.target.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(e) {
+            e.currentTarget.classList.remove('drag-over');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            const column = e.currentTarget;
+            column.classList.remove('drag-over');
+            
+            const card = document.querySelector('.dragging');
+            const addCard = column.querySelector('.add-card');
+            column.insertBefore(card, addCard);
+            
+            updateColumnCounts();
+            updateProjectStats();
+        }
+
+        function setupAddCards() {
+            document.querySelectorAll('.add-card').forEach(button => {
+                button.addEventListener('click', () => {
+                    const column = button.parentElement;
+                    const newCard = createCard();
+                    column.insertBefore(newCard, button);
+                    setupDragAndDrop();
+                    updateColumnCounts();
+                    updateProjectStats();
+                });
+            });
+        }
+
+        function createCard() {
+            const card = document.createElement('div');
+            card.className = 'kanban-card';
+            card.setAttribute('draggable', true);
+            
+            const priority = ['high', 'medium', 'low'][Math.floor(Math.random() * 3)];
+            
+            card.innerHTML = `
+                <div class="card-header">
+                    <div class="card-title">New Task</div>
+                    <span class="card-priority priority-${priority}">${priority}</span>
+                </div>
+                <div class="card-description">Click to edit description</div>
+                <div class="card-meta">
+                    <span><i class="far fa-clock"></i> Added just now</span>
+                    <span><i class="far fa-user"></i> Unassigned</span>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function updateColumnCounts() {
+            document.querySelectorAll('.kanban-cards').forEach(column => {
+                const count = column.querySelectorAll('.kanban-card').length;
+                column.parentElement.querySelector('.column-count').textContent = count;
+            });
+        }
+
+        function updateProjectStats() {
+            const totalTasks = document.querySelectorAll('.kanban-card').length;
+            const inProgress = document.querySelector('[data-column="in-process"]').querySelectorAll('.kanban-card').length;
+            const completed = document.querySelector('[data-column="done"]').querySelectorAll('.kanban-card').length;
+
+            document.querySelectorAll('.project-stats .stat-item strong').forEach((stat, index) => {
+                stat.textContent = [totalTasks, inProgress, completed][index];
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insert New Idea - Brainstorming Tool</title>
+    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+    <style>
+        :root {
+            --primary-color: #D83B01;
+            --what-color: #FF6B6B;
+            --when-color: #4ECDC4;
+            --where-color: #45B7AF;
+            --why-color: #96CEB4;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .insert-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .idea-insert-form {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .section-group {
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid;
+        }
+
+        .what-section { border-color: var(--what-color); }
+        .when-section { border-color: var(--when-color); }
+        .where-section { border-color: var(--where-color); }
+        .why-section { border-color: var(--why-color); }
+
+        .section-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .prompt-list {
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .prompt-item {
+            margin-bottom: 8px;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+            min-height: 100px;
+            margin-top: 10px;
+            font-family: inherit;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(216, 59, 1, 0.1);
+        }
+
+        .action-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .save-btn {
+            background-color: var(--primary-color);
+            color: white;
+        }
+
+        .save-btn:hover {
+            background-color: #c23501;
+        }
+
+        .cancel-btn {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+
+        .cancel-btn:hover {
+            background-color: #d0d0d0;
+        }
+
+        .character-count {
+            font-size: 12px;
+            color: #666;
+            text-align: right;
+            margin-top: 5px;
+        }
+
+        /* Add new styles for brainstorm section */
+        .brainstorm-section {
+            background: linear-gradient(135deg, #2b5876 0%, #4e4376 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .brainstorm-header {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brainstorm-content {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 6px;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .brainstorm-tips {
+            font-size: 14px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
+            margin-top: 15px;
+        }
+
+        .tips-list {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .tips-list li {
+            margin-bottom: 8px;
+        }
+
+        .highlight-text {
+            color: #FFD700;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="insert-container">
+        <!-- Add this new section before the form -->
+        <div class="brainstorm-section">
+            <div class="brainstorm-header">
+                Brainstorm Your Idea
+                <span class="highlight-text">Think → Explore → Define</span>
+            </div>
+            <div class="brainstorm-content">
+                Take a moment to freely brainstorm your idea before structuring it. 
+                Write down your initial thoughts, no matter how rough or unformed they might be.
+                This is your space to explore possibilities without judgment.
+            </div>
+            <textarea 
+                id="brainstorm-text" 
+                placeholder="Start brainstorming here... Let your thoughts flow freely."
+                style="width: 100%; min-height: 100px; margin-bottom: 15px; padding: 12px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); color: white;"
+            ></textarea>
+            <div class="brainstorm-tips">
+                <strong>Brainstorming Tips:</strong>
+                <ul class="tips-list">
+                    <li>Start with a broad concept and gradually refine it</li>
+                    <li>Don't self-censor - write down everything that comes to mind</li>
+                    <li>Consider different perspectives and possibilities</li>
+                    <li>Use the prompts below to structure your thoughts</li>
+                </ul>
+            </div>
+        </div>
+
+        <form class="idea-insert-form" 
+              hx-post="/api/ideas/create" 
+              hx-target="#ideas-content"
+              hx-swap="outerHTML">
+            
+            <!-- WHAT Section -->
+            <div class="section-group what-section">
+                <div class="section-header">WHAT is your idea?</div>
+                <div class="prompt-list">
+                    <div class="prompt-item">• What specific problem does this idea solve?</div>
+                    <div class="prompt-item">• What are the key components or features?</div>
+                    <div class="prompt-item">• What resources will you need?</div>
+                </div>
+                <textarea name="what" 
+                         required
+                         placeholder="Describe your idea in detail..."
+                         oninput="updateCharCount(this, 'what-count')"></textarea>
+                <div id="what-count" class="character-count">0/500 characters</div>
+            </div>
+
+            <!-- WHEN Section -->
+            <div class="section-group when-section">
+                <div class="section-header">WHEN will you execute this idea?</div>
+                <div class="prompt-list">
+                    <div class="prompt-item">• When is the ideal time to start?</div>
+                    <div class="prompt-item">• What are the key milestones and deadlines?</div>
+                    <div class="prompt-item">• When will you know it's successful?</div>
+                </div>
+                <textarea name="when" 
+                         required
+                         placeholder="Define your timeline..."
+                         oninput="updateCharCount(this, 'when-count')"></textarea>
+                <div id="when-count" class="character-count">0/500 characters</div>
+            </div>
+
+            <!-- WHERE Section -->
+            <div class="section-group where-section">
+                <div class="section-header">WHERE will this idea take place?</div>
+                <div class="prompt-list">
+                    <div class="prompt-item">• Where will this be implemented?</div>
+                    <div class="prompt-item">• What platforms or environments are needed?</div>
+                    <div class="prompt-item">• Where will the impact be felt?</div>
+                </div>
+                <textarea name="where" 
+                         required
+                         placeholder="Specify the context and location..."
+                         oninput="updateCharCount(this, 'where-count')"></textarea>
+                <div id="where-count" class="character-count">0/500 characters</div>
+            </div>
+
+            <!-- WHY Section -->
+            <div class="section-group why-section">
+                <div class="section-header">WHY is this idea important?</div>
+                <div class="prompt-list">
+                    <div class="prompt-item">• Why is this worth pursuing?</div>
+                    <div class="prompt-item">• What value does it bring?</div>
+                    <div class="prompt-item">• Why now?</div>
+                </div>
+                <textarea name="why" 
+                         required
+                         placeholder="Explain the purpose and motivation..."
+                         oninput="updateCharCount(this, 'why-count')"></textarea>
+                <div id="why-count" class="character-count">0/500 characters</div>
+            </div>
+
+            <div class="action-buttons">
+                <button type="button" 
+                        class="cancel-btn"
+                        onclick="window.location.href='/ideas'">Cancel</button>
+                <button type="submit" 
+                        class="save-btn">Save Idea</button>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Add new function to handle brainstorm text
+        function handleBrainstormText() {
+            const brainstormText = document.getElementById('brainstorm-text');
+            brainstormText.addEventListener('input', function() {
+                // Auto-save to local storage
+                localStorage.setItem('brainstorm-draft', this.value);
+            });
+
+            // Load saved draft if exists
+            const savedDraft = localStorage.getItem('brainstorm-draft');
+            if (savedDraft) {
+                brainstormText.value = savedDraft;
+            }
+        }
+
+        // Existing character count function
+        function updateCharCount(textarea, counterId) {
+            const maxLength = 500;
+            const currentLength = textarea.value.length;
+            document.getElementById(counterId).textContent = 
+                `${currentLength}/${maxLength} characters`;
+            
+            if (currentLength > maxLength) {
+                textarea.value = textarea.value.substring(0, maxLength);
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            handleBrainstormText();
+        });
+    </script>
+</body>
+</html> 
