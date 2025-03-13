@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Profile - My-Board</title>
+    <link rel="stylesheet" href="styles/dashboard.css" />
+    <link rel="stylesheet" href="styles/profile.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header class="dashboard-header">
+        <div class="user-welcome">
+          <div class="user-info">
+            <div class="user-avatar">
+              <img
+                src="https://via.placeholder.com/150"
+                alt="User Avatar"
+                id="userAvatar"
+              />
+            </div>
+            <div class="user-details">
+              <h2 id="userName">User Name</h2>
+              <p>Last login: <span id="lastLogin">Never</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-actions">
+          <div class="notification-bell">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">3</span>
+          </div>
+          <button
+            class="btn btn-outline"
+            onclick="location.href='../../../index.html'"
+          >
+            <i class="fas fa-home"></i> Back to Site
+          </button>
+          <button class="btn btn-primary" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <div class="dashboard-layout">
+        <aside class="sidebar">
+          <ul class="sidebar-menu">
+            <li>
+              <a href="user_dashboard.html">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="user_profile.html" class="active">
+                <i class="fas fa-user"></i> Profile
+              </a>
+            </li>
+            <li>
+              <a href="user_security.html">
+                <i class="fas fa-shield-alt"></i> Security
+              </a>
+            </li>
+            <li>
+              <a href="user_settings.html">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="handleLogout(); return false;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </aside>
+
+        <main class="main-content">
+          <section class="profile-details">
+            <h2>User Profile</h2>
+            <div class="form-group">
+              <label for="profileUsername">Username</label>
+              <p id="profileUsername">Not set</p>
+            </div>
+            <div class="form-group">
+              <label for="profileFullName">Full Name</label>
+              <p id="profileFullName">Not set</p>
+            </div>
+            <div class="form-group">
+              <label for="profileEmail">Email</label>
+              <p id="profileEmail">Not set</p>
+            </div>
+            <div class="form-group">
+              <label for="profileBio">Bio</label>
+              <p id="profileBio">No bio provided</p>
+            </div>
+            <div class="form-group">
+              <label for="profilePhone">Phone Number</label>
+              <p id="profilePhone">Not provided</p>
+            </div>
+            <div class="form-group">
+              <label for="profileLocation">Location</label>
+              <p id="profileLocation">Not provided</p>
+            </div>
+            <div class="form-group">
+              <label for="profileWebsite">Website</label>
+              <a id="profileWebsite" href="#">Not provided</a>
+            </div>
+            <div class="form-group">
+              <label for="profileJoined">Joined Date</label>
+              <p id="profileJoined">Not available</p>
+            </div>
+            <button class="btn btn-primary" onclick="openEditProfileModal()">
+              Edit Profile
+            </button>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+      <div class="notification-header">
+        <h3>Notifications</h3>
+        <button class="close-btn" id="closeNotifications">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="notification-list">
+        <div class="notification-item unread">
+          <div class="notification-icon">
+            <i class="fas fa-comment"></i>
+          </div>
+          <div class="notification-content">
+            <p>John commented on your post "Design Ideas"</p>
+            <span class="notification-time">2 hours ago</span>
+          </div>
+        </div>
+        <div class="notification-item unread">
+          <div class="notification-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="notification-content">
+            <p>Sarah liked your comment</p>
+            <span class="notification-time">Yesterday</span>
+          </div>
+        </div>
+        <div class="notification-item">
+          <div class="notification-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="notification-content">
+            <p>New user followed you</p>
+            <span class="notification-time">3 days ago</span>
+          </div>
+        </div>
+      </div>
+      <div class="notification-footer">
+        <a href="#">View all notifications</a>
+      </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Profile</h3>
+          <button class="modal-close" onclick="closeEditProfileModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editProfileForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editFirstName">First Name</label>
+                <input type="text" id="editFirstName" name="firstName" />
+              </div>
+              <div class="form-group">
+                <label for="editLastName">Last Name</label>
+                <input type="text" id="editLastName" name="lastName" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="editBio">Bio</label>
+              <textarea id="editBio" name="bio" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editPhone">Phone Number</label>
+              <input type="tel" id="editPhone" name="phone" />
+            </div>
+            <div class="form-group">
+              <label for="editLocation">Location</label>
+              <input type="text" id="editLocation" name="location" />
+            </div>
+            <div class="form-group">
+              <label for="editWebsite">Website</label>
+              <input type="url" id="editWebsite" name="website" />
+            </div>
+            <div class="form-group">
+              <label for="editProfileImage">Profile Image</label>
+              <input
+                type="file"
+                id="editProfileImage"
+                name="profileImage"
+                accept="image/*"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeEditProfileModal()">
+            Cancel
+          </button>
+          <button class="btn btn-primary" onclick="saveProfile()">
+            Save Profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="javascript/profile.js"></script>
+    <script src="javascript/common.js"></script>
+  </body>
+</html>

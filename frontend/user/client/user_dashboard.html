@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Dashboard - My-Board</title>
+    <link rel="stylesheet" href="styles/dashboard.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header class="dashboard-header">
+        <div class="user-welcome">
+          <div class="user-info">
+            <div class="user-avatar">
+              <img
+                src="https://via.placeholder.com/150"
+                alt="User Avatar"
+                id="userAvatar"
+              />
+            </div>
+            <div class="user-details">
+              <h2 id="userName">User Name</h2>
+              <p>Last login: <span id="lastLogin">Never</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-actions">
+          <div class="notification-bell">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">3</span>
+          </div>
+          <button
+            class="btn btn-outline"
+            onclick="location.href='../../../index.html'"
+          >
+            <i class="fas fa-home"></i> Back to Site
+          </button>
+          <button class="btn btn-primary" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <div class="dashboard-layout">
+        <aside class="sidebar">
+          <ul class="sidebar-menu">
+            <li>
+              <a href="user_dashboard.html" class="active">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="user_profile.html">
+                <i class="fas fa-user"></i> Profile
+              </a>
+            </li>
+            <li>
+              <a href="user_security.html">
+                <i class="fas fa-shield-alt"></i> Security
+              </a>
+            </li>
+            <li>
+              <a href="user_settings.html">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="handleLogout(); return false;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </aside>
+
+        <main class="main-content">
+          <!-- Dashboard Overview -->
+          <section class="dashboard-card" id="overview-section">
+            <div class="card-header">
+              <h2 class="card-title">Dashboard Overview</h2>
+            </div>
+
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon ideas">
+                  <i class="fas fa-lightbulb"></i>
+                </div>
+                <div class="stat-value">12</div>
+                <div class="stat-label">Ideas Shared</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon comments">
+                  <i class="fas fa-comment"></i>
+                </div>
+                <div class="stat-value">48</div>
+                <div class="stat-label">Comments</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon likes">
+                  <i class="fas fa-heart"></i>
+                </div>
+                <div class="stat-value">152</div>
+                <div class="stat-label">Likes Received</div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon views">
+                  <i class="fas fa-eye"></i>
+                </div>
+                <div class="stat-value">1.2k</div>
+                <div class="stat-label">Profile Views</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Recent Activity -->
+          <section class="dashboard-card" id="activity-section">
+            <div class="card-header">
+              <h2 class="card-title">Recent Activity</h2>
+              <a href="#" class="card-link">View All</a>
+            </div>
+
+            <ul class="activity-list" id="activityList">
+              <li class="activity-item">
+                <div class="activity-icon comment">
+                  <i class="fas fa-comment"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-message">
+                    You commented on <a href="#">"Improving User Experience"</a>
+                  </div>
+                  <div class="activity-time">2 hours ago</div>
+                </div>
+              </li>
+
+              <li class="activity-item">
+                <div class="activity-icon like">
+                  <i class="fas fa-heart"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-message">
+                    You liked <a href="#">"New Feature Proposal"</a>
+                  </div>
+                  <div class="activity-time">Yesterday</div>
+                </div>
+              </li>
+
+              <li class="activity-item">
+                <div class="activity-icon post">
+                  <i class="fas fa-file-alt"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-message">
+                    You created a new post <a href="#">"My Design Ideas"</a>
+                  </div>
+                  <div class="activity-time">3 days ago</div>
+                </div>
+              </li>
+
+              <li class="activity-item">
+                <div class="activity-icon login">
+                  <i class="fas fa-sign-in-alt"></i>
+                </div>
+                <div class="activity-content">
+                  <div class="activity-message">
+                    You logged in from a new device
+                  </div>
+                  <div class="activity-time">1 week ago</div>
+                </div>
+              </li>
+            </ul>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+      <div class="notification-header">
+        <h3>Notifications</h3>
+        <button class="close-btn" id="closeNotifications">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="notification-list" id="notificationList">
+        <!-- Notifications will be dynamically added here -->
+      </div>
+      <div class="notification-footer">
+        <a href="#">View all notifications</a>
+      </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div class="modal" id="editProfileModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title">Edit Profile</h3>
+          <button class="modal-close" onclick="closeEditProfileModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="editProfileForm">
+            <div class="form-row">
+              <div class="form-group">
+                <label for="editFirstName">First Name</label>
+                <input type="text" id="editFirstName" name="firstName" />
+              </div>
+              <div class="form-group">
+                <label for="editLastName">Last Name</label>
+                <input type="text" id="editLastName" name="lastName" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="editBio">Bio</label>
+              <textarea id="editBio" name="bio" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editPhone">Phone Number</label>
+              <input type="tel" id="editPhone" name="phone" />
+            </div>
+            <div class="form-group">
+              <label for="editLocation">Location</label>
+              <input type="text" id="editLocation" name="location" />
+            </div>
+            <div class="form-group">
+              <label for="editWebsite">Website</label>
+              <input type="url" id="editWebsite" name="website" />
+            </div>
+            <div class="form-group">
+              <label for="editProfileImage">Profile Image</label>
+              <input
+                type="file"
+                id="editProfileImage"
+                name="profileImage"
+                accept="image/*"
+              />
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeEditProfileModal()">
+            Cancel
+          </button>
+          <button class="btn btn-primary" onclick="saveProfile()">
+            Save Profile
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="javascript/dashboard.js"></script>
+  </body>
+</html>

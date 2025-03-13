@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>User Settings - My-Board</title>
+    <link rel="stylesheet" href="styles/dashboard.css" />
+    <link rel="stylesheet" href="styles/settings.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body>
+    <div class="container">
+      <header class="dashboard-header">
+        <div class="user-welcome">
+          <div class="user-info">
+            <div class="user-avatar">
+              <img
+                src="https://via.placeholder.com/150"
+                alt="User Avatar"
+                id="userAvatar"
+              />
+            </div>
+            <div class="user-details">
+              <h2 id="userName">User Name</h2>
+              <p>Last login: <span id="lastLogin">Never</span></p>
+            </div>
+          </div>
+        </div>
+        <div class="dashboard-actions">
+          <div class="notification-bell">
+            <i class="fas fa-bell"></i>
+            <span class="notification-badge" id="notificationCount">3</span>
+          </div>
+          <button
+            class="btn btn-outline"
+            onclick="location.href='../../../index.html'"
+          >
+            <i class="fas fa-home"></i> Back to Site
+          </button>
+          <button class="btn btn-primary" onclick="handleLogout()">
+            <i class="fas fa-sign-out-alt"></i> Logout
+          </button>
+        </div>
+      </header>
+
+      <div class="dashboard-layout">
+        <aside class="sidebar">
+          <ul class="sidebar-menu">
+            <li>
+              <a href="user_dashboard.html">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+              </a>
+            </li>
+            <li>
+              <a href="user_profile.html">
+                <i class="fas fa-user"></i> Profile
+              </a>
+            </li>
+            <li>
+              <a href="user_security.html">
+                <i class="fas fa-shield-alt"></i> Security
+              </a>
+            </li>
+            <li>
+              <a href="user_settings.html" class="active">
+                <i class="fas fa-cog"></i> Settings
+              </a>
+            </li>
+            <li>
+              <a href="#" onclick="handleLogout(); return false;">
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </aside>
+
+        <main class="main-content">
+          <!-- Notification Settings -->
+          <section class="dashboard-card" id="notification-settings-section">
+            <div class="card-header">
+              <h2 class="card-title">Notification Settings</h2>
+            </div>
+            <div class="card-content">
+              <form id="notificationSettingsForm">
+                <div class="settings-group">
+                  <h3>Email Notifications</h3>
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="emailComments">Comments on your posts</label>
+                      <p class="setting-description">
+                        Receive emails when someone comments on your posts
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="emailComments" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="emailLikes">Likes on your content</label>
+                      <p class="setting-description">
+                        Receive emails when someone likes your posts or comments
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="emailLikes" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="emailFollows">New followers</label>
+                      <p class="setting-description">
+                        Receive emails when someone follows you
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="emailFollows" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="emailSystem">System notifications</label>
+                      <p class="setting-description">
+                        Receive emails about important system updates
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="emailSystem" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-group">
+                  <h3>In-App Notifications</h3>
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="appComments">Comments on your posts</label>
+                      <p class="setting-description">
+                        Receive in-app notifications when someone comments on
+                        your posts
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="appComments" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="appLikes">Likes on your content</label>
+                      <p class="setting-description">
+                        Receive in-app notifications when someone likes your
+                        posts or comments
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="appLikes" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="appFollows">New followers</label>
+                      <p class="setting-description">
+                        Receive in-app notifications when someone follows you
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="appFollows" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    Save Notification Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- Privacy Settings -->
+          <section class="dashboard-card" id="privacy-settings-section">
+            <div class="card-header">
+              <h2 class="card-title">Privacy Settings</h2>
+            </div>
+            <div class="card-content">
+              <form id="privacySettingsForm">
+                <div class="settings-group">
+                  <h3>Profile Visibility</h3>
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="profileVisibility"
+                        >Who can see your profile</label
+                      >
+                      <p class="setting-description">
+                        Control who can view your profile information
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <select id="profileVisibility" class="form-select">
+                        <option value="public">Everyone</option>
+                        <option value="registered">Registered Users</option>
+                        <option value="followers">Followers Only</option>
+                        <option value="private">Only Me</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="activityVisibility"
+                        >Activity visibility</label
+                      >
+                      <p class="setting-description">
+                        Control who can see your activity (comments, likes,
+                        etc.)
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <select id="activityVisibility" class="form-select">
+                        <option value="public">Everyone</option>
+                        <option value="registered">Registered Users</option>
+                        <option value="followers">Followers Only</option>
+                        <option value="private">Only Me</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="settings-group">
+                  <h3>Data Usage</h3>
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="dataAnalytics"
+                        >Analytics and improvements</label
+                      >
+                      <p class="setting-description">
+                        Allow us to use your data to improve our services
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input type="checkbox" id="dataAnalytics" checked />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="setting-item">
+                    <div class="setting-info">
+                      <label for="dataPersonalization">Personalization</label>
+                      <p class="setting-description">
+                        Allow us to personalize your experience based on your
+                        activity
+                      </p>
+                    </div>
+                    <div class="setting-control">
+                      <label class="toggle-switch">
+                        <input
+                          type="checkbox"
+                          id="dataPersonalization"
+                          checked
+                        />
+                        <span class="toggle-slider"></span>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-actions">
+                  <button type="submit" class="btn btn-primary">
+                    Save Privacy Settings
+                  </button>
+                </div>
+              </form>
+            </div>
+          </section>
+
+          <!-- Account Settings -->
+          <section class="dashboard-card" id="account-settings-section">
+            <div class="card-header">
+              <h2 class="card-title">Account Settings</h2>
+            </div>
+            <div class="card-content">
+              <div class="settings-group">
+                <h3>Language and Region</h3>
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <label for="language">Language</label>
+                    <p class="setting-description">
+                      Select your preferred language for the interface
+                    </p>
+                  </div>
+                  <div class="setting-control">
+                    <select id="language" class="form-select">
+                      <option value="en">English</option>
+                      <option value="es">Español</option>
+                      <option value="fr">Français</option>
+                      <option value="de">Deutsch</option>
+                      <option value="zh">中文</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <label for="timezone">Timezone</label>
+                    <p class="setting-description">
+                      Select your timezone for accurate time displays
+                    </p>
+                  </div>
+                  <div class="setting-control">
+                    <select id="timezone" class="form-select">
+                      <option value="UTC">
+                        UTC (Coordinated Universal Time)
+                      </option>
+                      <option value="EST">EST (Eastern Standard Time)</option>
+                      <option value="CST">CST (Central Standard Time)</option>
+                      <option value="MST">MST (Mountain Standard Time)</option>
+                      <option value="PST">PST (Pacific Standard Time)</option>
+                      <option value="GMT">GMT (Greenwich Mean Time)</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="settings-group danger-zone">
+                <h3>Danger Zone</h3>
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <label>Deactivate Account</label>
+                    <p class="setting-description">
+                      Temporarily disable your account. You can reactivate it
+                      later.
+                    </p>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn btn-warning" id="deactivateAccountBtn">
+                      Deactivate Account
+                    </button>
+                  </div>
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-info">
+                    <label>Delete Account</label>
+                    <p class="setting-description danger-text">
+                      Permanently delete your account and all your data. This
+                      action cannot be undone.
+                    </p>
+                  </div>
+                  <div class="setting-control">
+                    <button class="btn btn-danger" id="deleteAccountBtn">
+                      Delete Account
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <!-- Notification Panel -->
+    <div class="notification-panel" id="notificationPanel">
+      <div class="notification-header">
+        <h3>Notifications</h3>
+        <button class="close-btn" id="closeNotifications">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="notification-list">
+        <div class="notification-item unread">
+          <div class="notification-icon">
+            <i class="fas fa-comment"></i>
+          </div>
+          <div class="notification-content">
+            <p>John commented on your post "Design Ideas"</p>
+            <span class="notification-time">2 hours ago</span>
+          </div>
+        </div>
+        <div class="notification-item unread">
+          <div class="notification-icon">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div class="notification-content">
+            <p>Sarah liked your comment</p>
+            <span class="notification-time">Yesterday</span>
+          </div>
+        </div>
+        <div class="notification-item">
+          <div class="notification-icon">
+            <i class="fas fa-user"></i>
+          </div>
+          <div class="notification-content">
+            <p>New user followed you</p>
+            <span class="notification-time">3 days ago</span>
+          </div>
+        </div>
+      </div>
+      <div class="notification-footer">
+        <a href="#">View all notifications</a>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirmationModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="modal-title" id="confirmationTitle">Confirm Action</h3>
+          <button class="modal-close" onclick="closeConfirmationModal()">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmationMessage">
+            Are you sure you want to proceed with this action?
+          </p>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeConfirmationModal()">
+            Cancel
+          </button>
+          <button class="btn btn-danger" id="confirmActionBtn">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="javascript/settings.js"></script>
+    <script src="javascript/common.js"></script>
+  </body>
+</html>

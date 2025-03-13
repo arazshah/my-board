@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login & Registration</title>
+    <link rel="stylesheet" href="styles/login.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="crystal crystal-1"></div>
+      <div class="crystal crystal-2"></div>
+      <div class="crystal crystal-3"></div>
+
+      <div class="form-container">
+        <div class="tab-container">
+          <div class="tab active" onclick="switchTab('login')">Login</div>
+          <div class="tab" onclick="switchTab('register')">Register</div>
+        </div>
+
+        <div id="login" class="form-content active">
+          <h2>Welcome Back!</h2>
+          <form id="login-form">
+            <div class="input-group">
+              <label for="login-email">Email</label>
+              <input type="email" id="login-email" required />
+            </div>
+            <div class="input-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" required />
+            </div>
+            <button type="submit">Login</button>
+          </form>
+          <div class="forgot-password">
+            <a href="#">Forgot Password?</a>
+          </div>
+
+          <div class="social-login">
+            <p>Or login with</p>
+            <div class="social-icons">
+              <button>G</button>
+              <button>f</button>
+              <button>in</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="register" class="form-content">
+          <h2>Create Account</h2>
+          <form id="register-form">
+            <div class="input-group">
+              <label for="register-username">Username</label>
+              <input type="text" id="register-username" required />
+            </div>
+            <div class="input-group">
+              <label for="register-email">Email</label>
+              <input type="email" id="register-email" required />
+            </div>
+            <div class="input-group">
+              <label for="register-password">Password</label>
+              <input type="password" id="register-password" required />
+            </div>
+            <div class="input-group">
+              <label for="register-confirm-password">Confirm Password</label>
+              <input type="password" id="register-confirm-password" required />
+            </div>
+            <button type="submit">Register</button>
+          </form>
+
+          <div class="social-login">
+            <p>Or register with</p>
+            <div class="social-icons">
+              <button>G</button>
+              <button>f</button>
+              <button>in</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-container">
+        <h2>Welcome to Crystal</h2>
+        <p>
+          Join our community and start sharing your ideas with the world.
+          Connect with like-minded individuals and collaborate on exciting
+          projects.
+        </p>
+        <p>
+          Already have an account? Login to access your dashboard and continue
+          your journey.
+        </p>
+      </div>
+    </div>
+
+    <!-- Add dialog overlay and box -->
+    <div class="dialog-overlay" id="dialogOverlay">
+      <div class="dialog-box">
+        <div class="dialog-header">
+          <h3 class="dialog-title" id="dialogTitle">Message</h3>
+          <button class="dialog-close" onclick="closeDialog()">&times;</button>
+        </div>
+        <div class="dialog-content" id="dialogContent"></div>
+        <div class="dialog-actions">
+          <button class="dialog-btn dialog-btn-primary" onclick="closeDialog()">
+            OK
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script src="javascript/login.js"></script>
+  </body>
+</html>
