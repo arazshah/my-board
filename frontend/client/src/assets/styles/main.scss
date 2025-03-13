@@ -1,0 +1,30 @@
+:root {
+  --primary-color: #0072ff;
+  --primary-light: #00c6ff;
+  --secondary-color: #ffd700;
+  --dark-color: #333;
+  --light-color: #f4f8fb;
+  --danger-color: #ff4757;
+  --success-color: #2ed573;
+  --warning-color: #ffa502;
+  --info-color: #70a1ff;
+  --gray-color: #a4b0be;
+  --border-radius: 12px;
+  --card-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
+  --transition: all 0.3s ease;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+  color: var(--dark-color);
+  min-height: 100vh;
+}
+
+// Import your existing dashboard styles here 
